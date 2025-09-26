@@ -1,0 +1,9 @@
+Package: c.ghh.resigner
+Name: Resigner
+Version: 1.0~beta1
+Architecture: iphoneos-arm
+Description: Resign binaries with ldid recursively in the specified directory. Check if ldid is installed to /usr/bin/ldid anddd is functional. Run as root.
+Maintainer: untether
+Author: untether
+Section: System
+Tag: role::hacker
