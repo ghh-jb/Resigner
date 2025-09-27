@@ -55,29 +55,27 @@ int walkdir(char *path) {
 	
 	DIR *dir = opendir(path);
 	if (dir == NULL) {
-		fprintf(stderr, "Failed to opendir('%s'): %s\n", path, strerror(errno));
+		fprintf(stderr, "[-]Failed to opendir('%s'): %s\n", path, strerror(errno));
 		return -1;
 	}
 	
 	
 	struct dirent *ent;
 	while ((ent = readdir(dir)) != NULL) {
-		if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0){
+		if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0 || strcmp(&ent->d_name[0], ".") == 0){
 			continue;
 		}
 		
 		char src_path[PATH_MAX];
 		if (snprintf(src_path, sizeof(src_path), "%s/%s", path, ent->d_name) >= sizeof(src_path)) {
-			printf("Path too long: %s/%s\n", path, ent->d_name);
-			closedir(dir);
-			return -1;
+			printf("[-] Path too long: %s/%s\n", path, ent->d_name);
+			continue;
 		}
 		
 		struct stat st;
 		if (lstat(src_path, &st) != 0) {
-			printf("Failed to lstat('%s'): %s\n", src_path, strerror(errno));
-			closedir(dir);
-			return -1;
+			printf("[-] Failed to lstat('%s'): %s\n", src_path, strerror(errno));
+			continue;
 		}
 		if (S_ISLNK(st.st_mode)) {
 			continue;
