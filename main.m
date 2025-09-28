@@ -25,26 +25,23 @@ int resign(char* path) {
 
 bool isMacho(char* path) {
 	
-	FILE *fp = fopen(path, "rb");
-	if (!fp) {
+	FILE *fd = fopen(path, "rb");
+	if (!fd) {
 		return false;
 	}
 
 	uint32_t magic;
-	if (fread(&magic, sizeof(magic), 1, fp) != 1) {
-		fclose(fp);
+	if (fread(&magic, sizeof(magic), 1, fd) != 1) {
+		fclose(fd);
 		return false;
 	}
 
-	fclose(fp);
-	if (magic == MH_MAGIC || magic == MH_CIGAM ||
-		magic == MH_MAGIC_64 || magic == MH_CIGAM_64) {
-		return true;
-	}
+	fclose(fd);
 
-	return false;
-  
-
+	return (magic == 0xFEEDFACE || magic == 0xCEFAEDFE ||
+			magic == 0xFEEDFACF || magic == 0xCFFAEDFE ||
+			magic == 0xCAFEBABE || magic == 0xBEBAFECA ||
+			magic == 0xCAFEBABF || magic == 0xBFBAFECA);
 }
 
 int walkdir(char *path) {
@@ -113,6 +110,8 @@ int main() {
 	char path_user[PATH_MAX]; 
 	scanf("%s", path_user);
 
+	// printf("%i\n", is_mach_o_simple(path_user)); // Some testing for mach-o detect function
+
 	dir = opendir(path_user);
 	if (dir == NULL) {
 		perror("Unable to open directory");
@@ -122,6 +121,7 @@ int main() {
 	walkdir(path_user);
 	printf("[+] Resigned!");
 	closedir(dir);
+
 
 	return 0;
 }
